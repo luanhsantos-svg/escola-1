@@ -1,0 +1,172 @@
+:root {
+  --bg: #f4f7fb;
+  --card: #fff;
+  --primary: #2f6fed;
+  --primary-dark: #2056be;
+  --text: #1d2635;
+  --muted: #5c677a;
+  --danger: #c83f4d;
+  --border: #dbe1ef;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.topbar {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(90deg, #17346f, #2f6fed);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.topbar h1 { margin: 0; }
+.topbar p { margin: 0.25rem 0 0; opacity: 0.9; }
+.topbar-actions { display: flex; gap: 0.5rem; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 6px 20px rgba(20, 40, 70, 0.08);
+}
+.inset { background: #fbfcff; }
+.section { margin-top: 1rem; }
+.stack { display: flex; flex-direction: column; gap: 0.5rem; }
+.gap-xs { gap: 0.35rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; align-items: end; }
+
+input, textarea, select, button {
+  font: inherit;
+  border-radius: 10px;
+}
+input, textarea, select {
+  width: 100%;
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.7rem;
+}
+button {
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  padding: 0.6rem 0.9rem;
+  cursor: pointer;
+}
+button:hover { background: var(--primary-dark); }
+.ghost-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+.danger-btn { background: var(--danger); }
+.danger-btn:hover { filter: brightness(0.92); background: var(--danger); }
+.file-label { display: inline-flex; align-items: center; cursor: pointer; }
+
+.tabs { display: flex; gap: 0.5rem; margin-bottom: 0.9rem; }
+.tab { background: #e8eefc; color: #20345f; font-weight: 600; }
+.tab.active { background: #1e4ebf; color: #fff; }
+.tab-content { display: none; }
+.tab-content.visible { display: block; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.5rem;
+}
+th, td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.55rem;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+.simple-list {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+}
+.simple-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 0.45rem 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.7rem;
+}
+.info-box {
+  margin-top: 0.7rem;
+  border: 1px dashed #9db1dd;
+  border-radius: 10px;
+  padding: 0.7rem;
+  color: #3a4f7d;
+  background: #f8faff;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+.stat {
+  padding: 0.8rem;
+  border-radius: 10px;
+  background: #f3f7ff;
+  border: 1px solid #d8e3fb;
+}
+.stat strong { display: block; font-size: 1.4rem; margin-top: 0.35rem; }
+
+.report-cards {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+.report-card {
+  border: 1px solid #b7c7ea;
+  border-radius: 12px;
+  padding: 1rem;
+  background: linear-gradient(180deg, #ffffff, #f6f9ff);
+}
+.report-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.report-meta { color: var(--muted); }
+.report-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: 1fr; }
+  .grid-2, .grid-3, .stats-grid, .report-stats { grid-template-columns: 1fr; }
+}
+
+@media print {
+  body { background: #fff; }
+  .topbar, .sidebar, .tabs, #tab-alunos, #tab-atividades, #tab-dashboard, .toolbar { display: none !important; }
+  #tab-boletim { display: block !important; box-shadow: none; }
+  .report-card { break-inside: avoid; }
+}

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escola+ | Controle de Atividades</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Escola+</h1>
+      <p>Controle de turmas, atividades e boletim escolar</p>
+    </div>
+    <div class="topbar-actions">
+      <button id="saveBackupBtn" class="ghost-btn">Exportar dados</button>
+      <label class="ghost-btn file-label">
+        Importar dados
+        <input type="file" id="importFile" accept="application/json" hidden />
+      </label>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar card">
+      <h2>Turmas</h2>
+      <form id="classForm" class="stack gap-xs">
+        <input id="className" placeholder="Nome da turma (ex.: 8º A)" required />
+        <button type="submit">Cadastrar turma</button>
+      </form>
+
+      <div class="section">
+        <h3>Selecionar turma</h3>
+        <select id="classSelector"></select>
+        <button id="deleteClassBtn" class="danger-btn">Excluir turma</button>
+      </div>
+
+      <div class="section">
+        <h3>Matérias</h3>
+        <form id="subjectForm" class="stack gap-xs">
+          <input id="subjectName" placeholder="Nova matéria" required />
+          <button type="submit">Adicionar matéria</button>
+        </form>
+        <ul id="subjectList" class="simple-list"></ul>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="tabs card">
+        <button class="tab active" data-tab="alunos">Alunos</button>
+        <button class="tab" data-tab="atividades">Atividades</button>
+        <button class="tab" data-tab="dashboard">Dashboard</button>
+        <button class="tab" data-tab="boletim">Boletim / Impressão</button>
+      </div>
+
+      <section id="tab-alunos" class="tab-content card visible">
+        <h2>Cadastro de alunos</h2>
+        <div class="grid-2">
+          <form id="studentSingleForm" class="stack">
+            <h3>Adicionar individual</h3>
+            <input id="studentName" placeholder="Nome do aluno" required />
+            <button type="submit">Adicionar aluno</button>
+          </form>
+
+          <form id="studentBatchForm" class="stack">
+            <h3>Adicionar em lote</h3>
+            <textarea id="studentBatch" rows="6" placeholder="Um aluno por linha"></textarea>
+            <button type="submit">Adicionar alunos em lote</button>
+          </form>
+        </div>
+
+        <h3>Lista de alunos</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="studentTable"></tbody>
+        </table>
+      </section>
+
+      <section id="tab-atividades" class="tab-content card">
+        <h2>Registro de atividades</h2>
+        <form id="activityForm" class="grid-3">
+          <select id="activitySubject" required></select>
+          <select id="activityType" required>
+            <option value="">Tipo de atividade</option>
+            <option value="tarefa">Tarefa / Pauta</option>
+            <option value="avaliacao">Trabalho / Avaliação</option>
+          </select>
+          <input id="activityDate" type="date" required />
+          <input id="activityTitle" placeholder="Título da atividade" required />
+          <input id="activityDescription" placeholder="Descrição da atividade" />
+          <button type="submit">Criar atividade</button>
+        </form>
+
+        <h3>Lançamento em lote da turma</h3>
+        <div class="toolbar">
+          <select id="activitySelector"></select>
+          <button id="removeActivityBtn" class="danger-btn">Excluir atividade</button>
+        </div>
+
+        <div id="batchHint" class="info-box"></div>
+        <div id="batchGrid"></div>
+        <div class="toolbar">
+          <button id="saveBatchBtn">Salvar lançamentos</button>
+          <button id="clearBatchBtn" class="danger-btn">Excluir notas/lançamentos</button>
+        </div>
+      </section>
+
+      <section id="tab-dashboard" class="tab-content card">
+        <h2>Dashboard da turma</h2>
+        <div id="dashboardStats" class="stats-grid"></div>
+
+        <div class="grid-2">
+          <article class="card inset">
+            <h3>Média por matéria</h3>
+            <canvas id="subjectChart"></canvas>
+          </article>
+          <article class="card inset">
+            <h3>Status das tarefas (R/NR/F)</h3>
+            <canvas id="taskChart"></canvas>
+          </article>
+        </div>
+
+        <div class="grid-2">
+          <article>
+            <h3>Ranking dos melhores alunos</h3>
+            <table>
+              <thead><tr><th>Posição</th><th>Aluno</th><th>Média</th></tr></thead>
+              <tbody id="rankingTable"></tbody>
+            </table>
+          </article>
+          <article>
+            <h3>Tabela comparativa (notas e tarefas)</h3>
+            <table>
+              <thead>
+                <tr><th>Aluno</th><th>Média</th><th>R</th><th>NR</th><th>F</th></tr>
+              </thead>
+              <tbody id="comparisonTable"></tbody>
+            </table>
+          </article>
+        </div>
+      </section>
+
+      <section id="tab-boletim" class="tab-content card">
+        <h2>Boletim escolar (estilo escola particular)</h2>
+        <div class="toolbar">
+          <select id="reportStudentSelector"></select>
+          <button id="printCurrentReportBtn">Imprimir boletim selecionado</button>
+          <button id="printAllReportsBtn">Imprimir boletins em lote</button>
+        </div>
+
+        <div id="reportCards" class="report-cards"></div>
+      </section>
+    </section>
+  </main>
+
+  <template id="reportTemplate">
+    <article class="report-card">
+      <header>
+        <h3>Escola+ · Boletim Escolar</h3>
+        <p class="report-meta"></p>
+      </header>
+      <table>
+        <thead><tr><th>Matéria</th><th>Média</th></tr></thead>
+        <tbody class="report-grades"></tbody>
+      </table>
+      <div class="report-stats"></div>
+      <footer>Documento gerado em <span class="report-date"></span>.</footer>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
