@@ -117,12 +117,17 @@
 
       <section id="tab-dashboard" class="tab-content card">
         <h2>Dashboard da turma</h2>
+        <div class="toolbar filters">
+          <select id="dashboardClassSelector"></select>
+          <select id="dashboardSubjectSelector"></select>
+        </div>
+
         <div id="dashboardStats" class="stats-grid"></div>
 
         <div class="grid-2">
           <article class="card inset">
-            <h3>Média por matéria</h3>
-            <canvas id="subjectChart"></canvas>
+            <h3>Comparação de médias dos alunos</h3>
+            <canvas id="comparisonChart"></canvas>
           </article>
           <article class="card inset">
             <h3>Status das tarefas (R/NR/F)</h3>
@@ -139,10 +144,10 @@
             </table>
           </article>
           <article>
-            <h3>Tabela comparativa (notas e tarefas)</h3>
+            <h3>Tabela comparativa (turma/matéria selecionada)</h3>
             <table>
               <thead>
-                <tr><th>Aluno</th><th>Média</th><th>R</th><th>NR</th><th>F</th></tr>
+                <tr><th>Aluno</th><th>Média</th><th>R</th><th>NR</th><th>F</th><th>Qtd. Avaliações</th></tr>
               </thead>
               <tbody id="comparisonTable"></tbody>
             </table>
@@ -152,8 +157,12 @@
 
       <section id="tab-boletim" class="tab-content card">
         <h2>Boletim escolar (estilo escola particular)</h2>
-        <div class="toolbar">
+        <div class="toolbar filters">
+          <select id="reportClassSelector"></select>
+          <select id="reportSubjectSelector"></select>
           <select id="reportStudentSelector"></select>
+        </div>
+        <div class="toolbar">
           <button id="printCurrentReportBtn">Imprimir boletim selecionado</button>
           <button id="printAllReportsBtn">Imprimir boletins em lote</button>
         </div>
@@ -170,10 +179,11 @@
         <p class="report-meta"></p>
       </header>
       <table>
-        <thead><tr><th>Matéria</th><th>Média</th></tr></thead>
-        <tbody class="report-grades"></tbody>
+        <thead><tr><th>Atividade</th><th>Data</th><th>Peso</th><th>Nota</th><th>Nota ponderada</th></tr></thead>
+        <tbody class="report-activities"></tbody>
       </table>
       <div class="report-stats"></div>
+      <p class="feedback-box"></p>
       <footer>Documento gerado em <span class="report-date"></span>.</footer>
     </article>
   </template>
