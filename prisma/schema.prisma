@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  VIEWER
+}
+
+enum ExamStatus {
+  DRAFT
+  OPEN
+  CLOSED
+}
+
+enum AttendanceStatus {
+  PRESENTE
+  FALTOU
+}
+
+model School {
+  id         String      @id @default(cuid())
+  name       String
+  users      User[]
+  classrooms Classroom[]
+  exams      Exam[]
+  createdAt  DateTime    @default(now())
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  passwordHash        String
+  role                UserRole
+  active              Boolean              @default(true)
+  schoolId            String
+  school              School               @relation(fields: [schoolId], references: [id])
+  teacherProfile      TeacherProfile?
+  teacherAssignments  TeacherAssignment[]  @relation("TeacherUser")
+  auditLogs           AuditLog[]
+  answerKeys          AnswerKey[]
+  studentResponses    StudentResponse[]
+  passwordResetTokens PasswordResetToken[]
+  createdAt           DateTime             @default(now())
+}
+
+model TeacherProfile {
+  userId String @id
+  phone  String?
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Discipline {
+  id           String              @id @default(cuid())
+  name         String              @unique
+  examSections ExamSection[]
+  assignments  TeacherAssignment[]
+}
+
+model Classroom {
+  id             String              @id @default(cuid())
+  name           String
+  grade          Int
+  year           Int
+  active         Boolean             @default(true)
+  schoolId       String
+  school         School              @relation(fields: [schoolId], references: [id])
+  students       Student[]
+  assignments    TeacherAssignment[]
+  examClassrooms ExamClassroom[]
+}
+
+model Student {
+  id                 String            @id @default(cuid())
+  fullName           String
+  registrationNumber String?
+  active             Boolean           @default(true)
+  classroomId        String
+  classroom          Classroom         @relation(fields: [classroomId], references: [id])
+  attendances        Attendance[]
+  responses          StudentResponse[]
+}
+
+model Exam {
+  id          String         @id @default(cuid())
+  title       String
+  appliedAt   DateTime
+  schoolYear  Int
+  status      ExamStatus     @default(DRAFT)
+  schoolId    String
+  school      School         @relation(fields: [schoolId], references: [id])
+  sections    ExamSection[]
+  attendances Attendance[]
+  classrooms  ExamClassroom[]
+}
+
+model ExamClassroom {
+  id          String    @id @default(cuid())
+  examId      String
+  classroomId String
+  exam        Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, classroomId])
+}
+
+model ExamSection {
+  id             String            @id @default(cuid())
+  examId         String
+  disciplineId   String
+  questionCount  Int
+  allowedOptions String[]          @default(["A", "B", "C", "D", "E"])
+  weight         Float?
+  teacherOwnerId String
+  exam           Exam              @relation(fields: [examId], references: [id], onDelete: Cascade)
+  discipline     Discipline        @relation(fields: [disciplineId], references: [id])
+  teacherOwner   User              @relation(fields: [teacherOwnerId], references: [id])
+  answerKey      AnswerKey?
+  responses      StudentResponse[]
+
+  @@unique([examId, disciplineId])
+}
+
+model AnswerKey {
+  id              String      @id @default(cuid())
+  examSectionId   String      @unique
+  answers         Json
+  updatedByUserId String
+  updatedAt       DateTime    @updatedAt
+  examSection     ExamSection @relation(fields: [examSectionId], references: [id], onDelete: Cascade)
+  updatedByUser   User        @relation(fields: [updatedByUserId], references: [id])
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  examId    String
+  studentId String
+  status    AttendanceStatus @default(PRESENTE)
+  exam      Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
+  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([examId, studentId])
+}
+
+model StudentResponse {
+  id              String      @id @default(cuid())
+  examSectionId   String
+  studentId       String
+  answers         Json
+  updatedByUserId String
+  updatedAt       DateTime    @updatedAt
+  examSection     ExamSection @relation(fields: [examSectionId], references: [id], onDelete: Cascade)
+  student         Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  updatedByUser   User        @relation(fields: [updatedByUserId], references: [id])
+
+  @@unique([examSectionId, studentId])
+}
+
+model TeacherAssignment {
+  id            String     @id @default(cuid())
+  teacherUserId String
+  classroomId   String
+  disciplineId  String
+  teacherUser   User       @relation("TeacherUser", fields: [teacherUserId], references: [id], onDelete: Cascade)
+  classroom     Classroom  @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  discipline    Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherUserId, classroomId, disciplineId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  entity    String
+  entityId  String
+  action    String
+  changes   Json
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
