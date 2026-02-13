@@ -1,0 +1,2 @@
+-- Prisma migration SQL placeholder for initial schema.
+-- Run `npx prisma migrate dev` to regenerate SQL for your environment.
