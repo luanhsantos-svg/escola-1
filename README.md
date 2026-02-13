@@ -1,35 +1,56 @@
 # Sistema de Tabulação Escolar
 
-Aplicativo web (Next.js + Prisma + Postgres) para gerenciamento de provas, gabaritos, lançamento de respostas, dashboard estatístico e relatórios.
+Aplicativo web em **Next.js + Prisma + Postgres** para correção automatizada e tabulação escolar de provas por turma/disciplina.
+
+## Se o link abriu mostrando texto do README
+Isso acontece quando o projeto foi publicado como **site estático** (ex.: GitHub Pages) em vez de executar o servidor Next.js.
+
+> Este sistema **não é estático**. Ele precisa de runtime Node + banco Postgres.
+
+Use uma das opções:
+- Deploy em Vercel/Render/Railway com variáveis de ambiente; ou
+- Docker Compose local/servidor (passos abaixo).
 
 ## Funcionalidades principais
-- RBAC: `ADMIN`, `TEACHER`, `VIEWER`.
-- Página separada de gabaritos por disciplina.
-- Lançamento de respostas por turma/disciplina em tabela.
-- Dashboard com KPIs, taxa de ausência e questões com maior erro.
-- Exportação CSV e impressão amigável.
-- Auditoria de alterações em gabaritos/respostas/provas.
+- RBAC: `ADMIN`, `TEACHER`, `VIEWER`
+- Página separada de **Gabaritos**
+- Página de **Lançamentos** em grade por turma
+- **Dashboard** com KPIs e estatísticas
+- **Relatórios CSV** + impressão limpa
+- Auditoria de alterações
 
 ## Stack
 - Next.js (App Router) + TypeScript + TailwindCSS
 - Prisma ORM + PostgreSQL
-- Autenticação por e-mail/senha com cookie assinado JWT
+- Login com e-mail/senha (JWT em cookie HTTP-only)
 
-## Setup
-1. Copie `.env.example` para `.env` e ajuste `DATABASE_URL` e `AUTH_SECRET`.
+## Configuração local
+1. Copie o ambiente:
+   ```bash
+   cp .env.example .env
+   ```
 2. Instale dependências:
    ```bash
    npm install
    ```
-3. Gere client Prisma e migre:
+3. Execute migração e seed:
    ```bash
    npx prisma migrate dev --name init
    npm run prisma:seed
    ```
-4. Rode em desenvolvimento:
+4. Rode localmente:
    ```bash
    npm run dev
    ```
+
+## Docker (produção rápida)
+```bash
+docker compose up --build
+```
+
+Depois:
+- App: `http://localhost:3000`
+- Healthcheck: `http://localhost:3000/api/health`
 
 ## Usuários seed
 - Admin: `admin@escola.com / 123456`
@@ -37,6 +58,6 @@ Aplicativo web (Next.js + Prisma + Postgres) para gerenciamento de provas, gabar
 - Professor português: `port@escola.com / 123456`
 - Direção (somente leitura): `viewer@escola.com / 123456`
 
-## Observações de produção
-- Configure HTTPS, `AUTH_SECRET` forte e estratégia de backup do Postgres.
-- Evolução futura: Google OAuth e envio real de e-mail para reset.
+## Variáveis obrigatórias
+- `DATABASE_URL`
+- `AUTH_SECRET`
