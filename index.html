@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Portal escolar integrado para simulados, frequência, busca ativa e relatórios pedagógicos." />
+  <title>Portal Escolar Integrado</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <main id="login-view" class="login-view">
+    <section class="login-panel">
+      <div class="brand brand-login">
+        <div class="brand-mark">PE</div>
+        <div>
+          <strong>Portal Escolar</strong>
+          <span>Gestão pedagógica integrada</span>
+        </div>
+      </div>
+      <div class="login-copy">
+        <span class="eyebrow">BI + FREQUÊNCIA</span>
+        <h1>Dados que ajudam a agir antes que o aluno fique para trás.</h1>
+        <p>Simulados, presença, busca ativa e relatórios em um único lugar.</p>
+      </div>
+      <div class="login-features">
+        <div><span>✓</span> Indicadores por turma e estudante</div>
+        <div><span>✓</span> Importação de planilhas</div>
+        <div><span>✓</span> Metas pedagógicas automáticas</div>
+      </div>
+    </section>
+
+    <section class="login-card-wrap">
+      <form id="login-form" class="login-card">
+        <div>
+          <span class="eyebrow">ACESSO</span>
+          <h2>Entrar no portal</h2>
+          <p>Use um dos perfis de demonstração abaixo.</p>
+        </div>
+        <label>
+          Usuário
+          <input id="login-user" autocomplete="username" required placeholder="admin" />
+        </label>
+        <label>
+          Senha
+          <input id="login-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+        </label>
+        <button class="btn btn-primary btn-lg" type="submit">Entrar</button>
+        <div class="demo-accounts">
+          <button type="button" data-demo="admin">Administrador</button>
+          <button type="button" data-demo="professor">Professor</button>
+          <button type="button" data-demo="consulta">Consulta</button>
+        </div>
+        <small>Protótipo local: os dados ficam salvos neste navegador.</small>
+      </form>
+    </section>
+  </main>
+
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <div id="sidebar-logo" class="brand-mark">PE</div>
+        <div class="brand-text">
+          <strong id="sidebar-school">Portal Escolar</strong>
+          <span id="sidebar-subtitle">Gestão integrada</span>
+        </div>
+      </div>
+
+      <nav id="main-nav" class="nav-list" aria-label="Navegação principal">
+        <button class="nav-item active" data-page="dashboard"><span>▦</span> Visão geral</button>
+        <button class="nav-item" data-page="turmas"><span>♙</span> Turmas e alunos</button>
+        <button class="nav-item" data-page="simulados"><span>✓</span> BI de simulados</button>
+        <button class="nav-item" data-page="frequencia"><span>◷</span> Frequência</button>
+        <button class="nav-item" data-page="busca"><span>⌕</span> Busca ativa</button>
+        <button class="nav-item" data-page="relatorios"><span>▤</span> Relatórios</button>
+        <button class="nav-item" data-page="configuracoes" data-admin-only><span>⚙</span> Configurações</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="storage-meter">
+          <div class="row-between"><span>Armazenamento local</span><strong id="storage-label">0 KB</strong></div>
+          <div class="meter"><span id="storage-bar"></span></div>
+        </div>
+        <button id="logout-btn" class="user-card">
+          <span id="user-avatar" class="avatar">A</span>
+          <span><strong id="user-name">Administrador</strong><small id="user-role">Administrador</small></span>
+          <b>↪</b>
+        </button>
+      </div>
+    </aside>
+
+    <section class="content-area">
+      <header class="topbar">
+        <button id="menu-btn" class="icon-btn mobile-only" aria-label="Abrir menu">☰</button>
+        <div>
+          <span id="page-eyebrow" class="eyebrow">PAINEL</span>
+          <h1 id="page-title">Visão geral</h1>
+        </div>
+        <div class="topbar-actions">
+          <span id="today-label" class="date-chip"></span>
+          <button id="theme-toggle" class="icon-btn" aria-label="Alternar tema">☾</button>
+        </div>
+      </header>
+
+      <div id="page-container" class="page-container"></div>
+    </section>
+  </div>
+
+  <div id="modal-root" class="modal-root hidden" role="dialog" aria-modal="true"></div>
+</body>
+</html>

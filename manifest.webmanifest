@@ -1,0 +1,9 @@
+{
+  "name": "Portal Escolar Integrado",
+  "short_name": "Portal Escolar",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#5b5ce2",
+  "description": "BI de simulados, frequência, busca ativa e relatórios pedagógicos."
+}
