@@ -1,34 +1,79 @@
 # Portal Escolar Integrado
 
-Aplicação web que reúne **BI de simulados**, **controle de frequência**, **busca ativa**, **turmas e alunos** e **relatórios pedagógicos** em um único painel.
+Sistema de gestão pedagógica que reúne **BI de simulados**, **controle de frequência**, **busca ativa**, **turmas e alunos**, **metas** e **relatórios** em um único painel.
 
-## Funcionalidades
+## Situação do projeto
 
-- Dashboard geral com desempenho, frequência, faltas e alertas.
-- Cadastro livre de turmas e estudantes.
-- Importação de estudantes por CSV, XLS ou XLSX.
-- Simulados com quantidade variável de questões e disciplinas.
-- Gabarito e lançamento de respostas por estudante.
-- Indicadores por turma, estudante e questão.
-- Registro diário de presença, falta, justificativa e atraso.
-- Busca ativa automática para faltas do dia e frequência crítica.
-- Relatório individual com meta seguinte mínima configurável.
-- Tema claro/escuro, cor principal e logo da escola.
+A interface visual já possui um protótipo funcional. A criação da versão real começou pela fundação do backend na branch `agent/fundacao-sistema-escolar`.
+
+### Fase 1 — Fundação do sistema
+
+- Google Sheets como banco de dados.
+- Google Apps Script como backend e API.
+- Criação automática das abas do sistema.
+- Autenticação com senha protegida por salt e SHA-256.
+- Sessões com duração de até seis horas.
 - Perfis de administrador, professor e consulta.
-- Backup e restauração em JSON.
-- Instalação como aplicativo web (PWA).
+- Auditoria de logins e lançamentos.
+- Dashboard inicial com desempenho, frequência e alertas.
+- Módulo de frequência com os status:
+  - Presente;
+  - Falta;
+  - Justificada;
+  - Atestado;
+  - Justificada pelo responsável;
+  - Atraso.
+- Cliente JavaScript preparado para conectar as telas à API.
 
-## Acesso de demonstração
+## Arquitetura definida
 
-| Perfil | Usuário | Senha |
-|---|---|---|
-| Administrador | `admin` | `admin123` |
-| Professor | `professor` | `prof123` |
-| Consulta | `consulta` | `consulta123` |
+```text
+Interface web
+    ↓
+api-client.js
+    ↓
+Google Apps Script
+    ↓
+Google Sheets
+```
 
-## Executar localmente
+A escolha preserva o modelo já desenvolvido no BI de simulados e permite evolução incremental para PWA e aplicativo móvel.
 
-Abra o `index.html` em um servidor local. Exemplo:
+## Estrutura de dados
+
+O instalador `setupSystem()` cria estas abas:
+
+- `CONFIGURACAO`
+- `USUARIOS`
+- `TURMAS`
+- `ALUNOS`
+- `SIMULADOS`
+- `RESULTADOS`
+- `FREQUENCIA`
+- `METAS`
+- `AUDITORIA`
+
+## Funcionalidades planejadas
+
+- Dashboard geral com filtros por turma, aluno, disciplina e simulado.
+- Cadastro e importação de turmas e estudantes.
+- Gabaritos e resultados por questão.
+- Desempenho por aluno, turma, disciplina e habilidade.
+- Ranking, alertas e evolução entre avaliações.
+- Seis simulados, cada um valendo um ponto.
+- Conversão da nota final pela regra `(Nota Final ÷ 6) × 10`.
+- Frequência diária e análises estatísticas.
+- Busca ativa e histórico de intervenções.
+- Boletim em PDF e exportação para Excel.
+- Backup, temas e personalização da escola.
+
+## Pastas principais
+
+- `apps-script/`: backend, banco, autenticação e regras.
+- `api-client.js`: conexão da interface com o backend.
+- `index.html`, `styles.css` e `app.js`: frontend atual.
+
+## Executar o protótipo visual
 
 ```bash
 python -m http.server 8000
@@ -36,10 +81,16 @@ python -m http.server 8000
 
 Depois acesse `http://localhost:8000`.
 
-## Publicação
+## Instalar o backend
 
-O projeto é estático e pode ser publicado diretamente no GitHub Pages. O workflow incluído publica o conteúdo da branch `main` após o merge.
+Consulte [`apps-script/README.md`](apps-script/README.md). O primeiro passo é copiar os arquivos para um projeto do Google Apps Script e executar `setupSystem()`.
 
-## Observação importante
+## Próximas implementações
 
-Esta versão é um MVP local e usa `localStorage`; portanto, autenticação e dados não são adequados para uso institucional com informações reais sem um backend seguro. A próxima etapa recomendada é integrar Supabase ou Firebase, com banco de dados, autenticação real, permissões e backup em nuvem.
+1. Conectar o login da interface à autenticação real.
+2. Carregar turmas e alunos da planilha.
+3. Conectar o lançamento de frequência.
+4. Migrar simulados, gabaritos e resultados.
+5. Implementar relatórios, boletim e exportações.
+
+> Não use os usuários e senhas demonstrativos do protótipo com dados reais. A versão institucional deve operar pelo backend da pasta `apps-script/`.
